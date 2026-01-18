@@ -5,6 +5,7 @@ import { ResponseType } from "@/lib/types/apiResponse";
 import { ServerResponseBuilder } from "@/lib/builders/serverResponseBuilder"; 
 import clientPromise from "@/lib/mongodb";
 import { RequestStatus } from "@/lib/types/request";
+import { PAGINATION_PAGE_SIZE } from "@/lib/constants/config";
 
 
 export async function PUT(request: Request) { 
@@ -47,5 +48,29 @@ export async function PUT(request: Request) {
     return new ServerResponseBuilder(ResponseType.UNKNOWN_ERROR).build(); 
   }
   
+}
+
+export async function GET(request: Request) {
+  try {
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get("page") || "1"); 
   
+    const client = await clientPromise; 
+    const db = client.db("bog-takehome");
+    const collection = db.collection("requests"); 
+  
+    const allRequests = await collection.find({}).sort({ createdDate: -1 }).toArray(); 
+    const startindex = (page - 1) * PAGINATION_PAGE_SIZE;
+    const paginationRequests = allRequests.slice(startindex, startindex + PAGINATION_PAGE_SIZE); 
+
+    return new Response(JSON.stringify(paginationRequests), {
+      status: 200, 
+      headers: { "Content-Type": "application/json" }, 
+    });
+
+  } catch(e) { 
+    console.error(e); 
+    return new ServerResponseBuilder(ResponseType.UNKNOWN_ERROR).build(); 
+  }
+
 }
