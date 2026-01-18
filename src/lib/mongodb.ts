@@ -32,4 +32,10 @@ if (process.env.NODE_ENV === "development") {
   clientPromise = client.connect();
 }
 
+export async function getCollection() {
+  const client = await clientPromise;
+  const db = client.db("bog-takehome");
+  return db.collection("requests");
+}
+
 export default clientPromise;

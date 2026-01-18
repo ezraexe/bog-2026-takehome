@@ -1,49 +1,52 @@
 "use client";
 
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
 import { useState } from "react";
+import Dropdown from "@/components/atoms/Dropdown";
 
-/**
- * Legacy front-end code from Crisis Corner's previous admin page!
- */
 export default function ItemRequestsPage() {
-  const [item, setItem] = useState<string>("");
-  const [itemList, setItemList] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState("all");
+  const [testStatus, setTestStatus] = useState("pending"); 
 
-  const handleAddItem = (): void => {
-    if (item.trim()) {
-      setItemList((prevList) => [...prevList, item.trim()]);
-      setItem("");
-    }
-  };
+  const tabs = ["All", "Pending", "Approved", "Completed", "Rejected"];
+
+
+  const statusOptions = [
+    { value: "pending", label: "Pending" },
+    { value: "approved", label: "Approved" },
+    { value: "completed", label: "Completed" },
+    { value: "rejected", label: "Rejected" },
+  ];
 
   return (
-    <div className="max-w-md mx-auto mt-8 flex flex-col items-center gap-6">
-      <h2 className="font-bold">Approve Items</h2>
+    <div className="bg-white min-h-screen p-8">
+      <h1 className="font-medium text-lg leading-7 mb-6">Item Requests</h1>
 
-      <div className="flex flex-col w-full gap-4">
-        <Input
-          type="text"
-          placeholder="Type an item"
-          value={item}
-          onChange={(e) => setItem(e.target.value)}
-          label="Item"
+      <div className="flex gap-2 mb-6">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab.toLowerCase())}
+            className={`py-2 px-6 rounded-md transition ${
+              activeTab === tab.toLowerCase()
+                ? "bg-primary text-white"
+                : "bg-gray-fill text-gray-text-dark hover:bg-gray-stroke"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      <div className="mb-6">
+        <p>Dropdown:</p>
+        <Dropdown
+          options={statusOptions}
+          value={testStatus}
+          onChange={(newStatus) => setTestStatus(newStatus)}
         />
-        <Button onClick={handleAddItem}>Approve</Button>
       </div>
-      <div className="flex flex-col gap-3">
-        <h3 className="underline">Currently approved items:</h3>
-        {itemList.length > 0 ? (
-          <ul className="list-disc pl-5">
-            {itemList.map((listItem, index) => (
-              <li key={index}>{listItem}</li>
-            ))}
-          </ul>
-        ) : (
-          "None :("
-        )}
-      </div>
+
+
     </div>
   );
 }

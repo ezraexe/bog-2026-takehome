@@ -2,11 +2,10 @@
 
 import { ResponseType } from "@/lib/types/apiResponse"; 
 import { ServerResponseBuilder } from "@/lib/builders/serverResponseBuilder"; 
-import clientPromise from "@/lib/mongodb";
 import { RequestStatus } from "@/lib/types/request";
 import { PAGINATION_PAGE_SIZE } from "@/lib/constants/config";
 import { ObjectId } from "mongodb";
-
+import { getCollection } from "@/lib/mongodb";
 
 export async function PUT(request: Request) { 
   try { 
@@ -20,9 +19,7 @@ export async function PUT(request: Request) {
       return new ServerResponseBuilder(ResponseType.INVALID_INPUT).build();
     }
     
-    const client = await clientPromise; 
-    const db = client.db("bog-takehome");
-    const collection = db.collection("requests");
+    const collection = await getCollection(); 
     
     const newRequest = {
       requestorName,
@@ -57,9 +54,7 @@ export async function GET(request: Request) {
     const status = url.searchParams.get("status"); 
   
   
-    const client = await clientPromise; 
-    const db = client.db("bog-takehome");
-    const collection = db.collection("requests"); 
+    const collection = await getCollection(); 
 
     const queryFilter: { status?: string } = {}; 
     if (status) {
@@ -95,9 +90,7 @@ export async function PATCH(request: Request) {
       return new ServerResponseBuilder(ResponseType.INVALID_INPUT).build(); 
     }
 
-    const client = await clientPromise; 
-    const db = client.db("bog-takehome");
-    const collection = db.collection("requests");
+    const collection = await getCollection(); 
 
     const res = await collection.findOneAndUpdate(
       { _id: new ObjectId(id) },
