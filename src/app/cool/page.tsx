@@ -7,6 +7,11 @@ export default function Kewl() {
       Feel free to put links, images, whatever! 
       Don't worry about styling- we aren't grading you on this- it's just to get to know you better! :) 
       */}
+
+      <div className="flex gap-4">
+        <img src="/friendz.JPG" className="max-w-md h-auto rounded-lg" />
+      </div>
+
       <div className="w-1/2 text-center"> 
         Hello! My name is Ezra, and I&apos;m a rising 4th year Computer Science major. 
         I was previously a part of GT Esports, where I was a coordinator and played for GT Valorant during my freshman year, 
